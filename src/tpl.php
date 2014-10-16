@@ -4,13 +4,14 @@
  * Class Tpl
  *
  * Super simple PHP template engine.
+ * https://github.com/Seramis/PHP_Template
  *
  * Templates are written with alternative PHP syntax, so nothing new to learn.
  * Beginning and ending of php tags can be written as { and }
  * If letter after { is space, new line, tab, then it is not parsed. (Possibility to write JS in templates)
  *
  * If another template is needed to included, Tpl::incl($sTemplatePath, $aVars) can be used inside template:
- * {Tpl:incl('subpages/info.tpl', array('name' => 'blah'))}
+ * {Tpl:incl('%path%/subpages/info.tpl', array('name' => 'blah'))}
  * Relative paths to current template file is supported.
  *
  * Example Template with JS code inside:
@@ -46,7 +47,7 @@ class Tpl
 	}
 
 	/**
-	 * Includes another template. In reality eval()s parsed template file's content.
+	 * Includes another template.
 	 *
 	 * @param string $sTemplateFile
 	 * @param array $aData
@@ -57,6 +58,12 @@ class Tpl
 		echo $oTpl->fetch();
 	}
 
+	/**
+	 * Returns compiled file location. Generates compiled file, if needed.
+	 *
+	 * @param string $sTemplateFile
+	 * @return string
+	 */
 	private static function getCompiled($sTemplateFile)
 	{
 		$sCompiledFile = static::getCompiledFilename($sTemplateFile);
@@ -85,6 +92,17 @@ class Tpl
 
 		$sTpl = file_get_contents($sTemplateFile);
 
+		//Template data keywords
+		$sTpl = str_replace(
+			array('%tpl%', '%path%', '%file%'),
+			array(
+				$sTemplateFile,
+				dirname($sTemplateFile),
+				basename($sTemplateFile)
+			),
+			$sTpl
+		);
+
 		//This is the magic!
 		//Starts with {
 		//Next letter IS NOT space, new lines, tab nor }
@@ -92,7 +110,11 @@ class Tpl
 		//Ends with }
 		$sTpl = preg_replace('#\{([^\s\r\n\t\}]+?[^\}]*?)\}#', '<?$1?>', $sTpl);
 
-		$sTpl = '<?/*' . PHP_EOL . 'Compiled file of ' . $sTemplateFile . PHP_EOL . 'PHP Template - Joonatan Uusväli' . PHP_EOL . '*/?>' . PHP_EOL . $sTpl;
+		$sTpl = '<?/*' . PHP_EOL
+			. 'PHP Template - Joonatan Uusväli' . PHP_EOL
+			. 'Compiled file of ' . $sTemplateFile . PHP_EOL
+			. 'Compiled: ' . date('Y-m-d H:i:s') . PHP_EOL
+			. '*/?>' . PHP_EOL . $sTpl;
 
 		if(!is_dir($sDir))
 		{
@@ -104,6 +126,12 @@ class Tpl
 		return true;
 	}
 
+	/**
+	 * Generates compiled file location.
+	 *
+	 * @param string $sTemplateFile
+	 * @return string
+	 */
 	private static function getCompiledFilename($sTemplateFile)
 	{
 		return static::$_sCompileDir . DIRECTORY_SEPARATOR . str_replace(array('\\', '/'), DIRECTORY_SEPARATOR, $sTemplateFile) . '.php';
