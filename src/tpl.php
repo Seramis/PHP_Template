@@ -92,13 +92,14 @@ class Tpl
 
 		$sTpl = file_get_contents($sTemplateFile);
 
-		//Template data keywords
+		//Template data keywords and short echo syntax
 		$sTpl = str_replace(
-			array('%tpl%', '%path%', '%file%'),
+			array('%tpl%', '%path%', '%file%', '{='),
 			array(
 				$sTemplateFile,
 				dirname($sTemplateFile),
-				basename($sTemplateFile)
+				basename($sTemplateFile),
+				'{echo '
 			),
 			$sTpl
 		);
@@ -108,13 +109,13 @@ class Tpl
 		//Next letter IS NOT space, new lines, tab nor }
 		//Everything except } (Including new lines, tabs etc.)
 		//Ends with }
-		$sTpl = preg_replace('#\{([^\s\r\n\t\}]+?[^\}]*?)\}#', '<?$1?>', $sTpl);
+		$sTpl = preg_replace('#\{([^\s\r\n\t\}]+?[^\}]*?)\}#', '<?php $1; ?>', $sTpl);
 
-		$sTpl = '<?/*' . PHP_EOL
+		$sTpl = '<?php /*' . PHP_EOL
 			. 'PHP Template - Joonatan Uusväli' . PHP_EOL
 			. 'Compiled file of ' . $sTemplateFile . PHP_EOL
 			. 'Compiled: ' . date('Y-m-d H:i:s') . PHP_EOL
-			. '*/?>' . PHP_EOL . $sTpl;
+			. '*/ ?>' . PHP_EOL . $sTpl;
 
 		if(!is_dir($sDir))
 		{

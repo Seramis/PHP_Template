@@ -1,6 +1,6 @@
 # PHP Template #
 PHP itself is a powerful language... and very powerful for templating too! Why to start to reinvent the wheel, when you could just use PHP by itself as a templating language? Besides, you already know PHP, so why should I say to you that now you need to learn new language?
-This templating class makes a bit it easier to write [alternative php syntax](http://php.net/manual/en/control-structures.alternative-syntax.php) into templates.
+This templating class makes it a bit easier to write [alternative php syntax](http://php.net/manual/en/control-structures.alternative-syntax.php) into templates.
 
 ## Example template ##
 ```php
