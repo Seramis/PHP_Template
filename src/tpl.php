@@ -29,8 +29,20 @@ class Tpl
 {
 	private $_sTplFile;
 	private $_aData = array();
-	private static $_sCompileDir = 'compile';
-	public static $_bAlwaysCompile = true;
+	protected static $_sCompileDir = 'compile';
+	protected static $_bAlwaysCompile = false;
+
+	/**
+	 * Escapes given value so it can be displayed in browser
+	 *
+	 * @param mixed $mValue
+	 *
+	 * @return string
+	 */
+	public static function escape($mValue)
+	{
+		return htmlspecialchars($mValue, ENT_COMPAT, 'UTF-8');
+	}
 
 	/**
 	 * Fetches given template file and given data.
@@ -103,6 +115,10 @@ class Tpl
 			),
 			$sTpl
 		);
+
+		//Escaped echo syntax
+		//{#$blah} -> {echo Tpl::escape($blah)}
+		$sTpl = preg_replace('#\{\#([^\}]*?)\}#', '{echo Tpl::escape($1)}', $sTpl);
 
 		//This is the magic!
 		//Starts with {
