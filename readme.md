@@ -3,13 +3,13 @@ PHP itself is a powerful language... and very powerful for templating too! Why t
 This templating class makes it a bit easier to write [alternative php syntax](http://php.net/manual/en/control-structures.alternative-syntax.php) into templates.
 
 ## Example template ##
-```php
+```
 {/* This is a comment. */}
 Hello, {#$name}!<br />
 {for($i = 0; $i < 10; $i++):}
 	Iteration {=$i}<br />
-{endfor;}
-{Tpl::incl('%path%/relative/path/to/template.tpl'}
+{endfor}
+{Tpl::incl('%path%/relative/path/to/template.tpl')}
 ```
 
 ## So what does it do? ##
@@ -38,7 +38,7 @@ function money($fNum)
 }
 ```
 And now, in templates:
-```php
+```
 {=$fPrice} {/* Ordinary float echo */}
 {=money($fPrice)} {/* My way of displaying monetary value */}
 ```
